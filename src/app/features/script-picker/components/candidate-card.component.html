@@ -1,0 +1,40 @@
+<mat-card
+  appearance="outlined"
+  class="cursor-pointer transition-all hover:shadow-md h-full"
+  [class.!border-primary]="selected()"
+  [class.!border-2]="selected()"
+>
+  <mat-card-header>
+    <mat-card-title class="!text-base !leading-snug">
+      {{ candidate().title }}
+    </mat-card-title>
+    <mat-card-subtitle class="!flex !items-center !gap-2">
+      <mat-chip color="primary" highlighted disableRipple class="!text-xs">
+        {{ candidate().tone }}
+      </mat-chip>
+      <span class="text-xs text-slate-400">
+        ~{{ candidate().estimatedDurationSec }}s
+      </span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content class="!pt-3">
+    <p class="text-sm text-slate-600 italic mb-3 line-clamp-2">
+      "{{ candidate().hook }}"
+    </p>
+    <div class="space-y-1.5 border-t border-slate-100 pt-3">
+      <div
+        *ngFor="let s of candidate().scenes.slice(0, 3)"
+        class="text-xs text-slate-500 line-clamp-1 flex gap-2"
+      >
+        <span class="font-mono text-slate-400">{{ s.index + 1 }}.</span>
+        <span>{{ s.voiceOver }}</span>
+      </div>
+      <div
+        *ngIf="candidate().scenes.length > 3"
+        class="text-xs text-slate-400 pl-5"
+      >
+        + {{ candidate().scenes.length - 3 }} scene khác…
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

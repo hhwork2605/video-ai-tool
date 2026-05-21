@@ -1,0 +1,191 @@
+<div class="space-y-6 animate-fade-in">
+  <div class="flex items-start justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Xuất bản</h1>
+      <p class="text-sm text-slate-500 mt-1">
+        Sao chép caption + hashtag, tải video, đăng lên MXH yêu thích.
+      </p>
+    </div>
+    <button mat-button (click)="back()">
+      <mat-icon>arrow_back</mat-icon>
+      Sửa scenes
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <!-- Video preview -->
+    <mat-card class="lg:col-span-3" appearance="outlined">
+      <div
+        class="bg-black flex items-center justify-center mx-auto"
+        [ngClass]="previewWrapClass()"
+      >
+        <video
+          *ngIf="project()?.finalVideoUrl"
+          [src]="project()!.finalVideoUrl!"
+          controls
+          class="w-full h-full object-contain"
+        ></video>
+        <div
+          *ngIf="!project()?.finalVideoUrl"
+          class="flex flex-col items-center text-slate-400 gap-2 p-8"
+        >
+          <mat-icon class="!text-5xl !w-12 !h-12">movie</mat-icon>
+          <p class="text-sm">Video cuối chưa được render</p>
+          <p class="text-xs text-slate-500">
+            Quay lại Scenes Editor để render trước
+          </p>
+        </div>
+      </div>
+      <mat-card-actions class="!justify-center !p-4">
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="!project()?.finalVideoUrl"
+          (click)="download()"
+        >
+          <mat-icon>download</mat-icon>
+          Tải MP4
+        </button>
+        <a
+          mat-stroked-button
+          *ngIf="project()?.finalVideoUrl"
+          [href]="project()!.finalVideoUrl!"
+          target="_blank"
+          rel="noopener"
+        >
+          <mat-icon>open_in_new</mat-icon>
+          Mở tab mới
+        </a>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Metadata sidebar -->
+    <div class="lg:col-span-2 space-y-4">
+      <mat-card appearance="outlined">
+        <mat-card-header class="!flex !justify-between !items-center !p-4 !pb-0">
+          <mat-card-title class="!text-base">Metadata MXH</mat-card-title>
+          <button
+            mat-stroked-button
+            *ngIf="!loading()"
+            (click)="regenerate()"
+            matTooltip="Gen lại bằng AI"
+          >
+            <mat-icon>refresh</mat-icon>
+            Gen lại
+          </button>
+        </mat-card-header>
+
+        <mat-card-content class="!p-4 !pt-3 space-y-4">
+          <div *ngIf="loading()" class="flex justify-center py-6">
+            <mat-progress-spinner mode="indeterminate" diameter="36" />
+          </div>
+
+          <ng-container *ngIf="!loading() && meta() as m">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Tiêu đề</mat-label>
+              <input matInput [(ngModel)]="m.title" maxlength="60" />
+              <button
+                mat-icon-button
+                matSuffix
+                matTooltip="Copy tiêu đề"
+                (click)="copy(m.title, 'tiêu đề')"
+              >
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Caption</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="m.caption"
+                rows="4"
+                maxlength="280"
+              ></textarea>
+              <button
+                mat-icon-button
+                matSuffix
+                matTooltip="Copy caption"
+                (click)="copy(m.caption, 'caption')"
+              >
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-sm font-medium text-slate-700">
+                  Hashtags ({{ m.hashtags.length }})
+                </label>
+                <button
+                  mat-stroked-button
+                  class="!text-xs"
+                  (click)="copyHashtags(m.hashtags)"
+                >
+                  <mat-icon class="!text-base !w-4 !h-4">content_copy</mat-icon>
+                  Copy tất cả
+                </button>
+              </div>
+              <mat-chip-set>
+                <mat-chip
+                  *ngFor="let h of m.hashtags"
+                  highlighted
+                  color="primary"
+                  disableRipple
+                >
+                  #{{ h }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+
+            <mat-divider />
+
+            <button
+              mat-flat-button
+              color="primary"
+              class="!w-full !h-11"
+              (click)="copyAll(m)"
+            >
+              <mat-icon>content_copy</mat-icon>
+              Copy caption + hashtag
+            </button>
+          </ng-container>
+
+          <button
+            *ngIf="!loading() && !meta()"
+            mat-flat-button
+            color="primary"
+            class="!w-full !h-11"
+            (click)="regenerate()"
+          >
+            <mat-icon>auto_awesome</mat-icon>
+            Gen tiêu đề + hashtag
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header class="!p-4 !pb-0">
+          <mat-card-title class="!text-sm">Đăng nhanh</mat-card-title>
+          <mat-card-subtitle class="!text-xs">
+            Caption đã copy sẵn — chỉ cần paste vào app.
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="!p-4 !pt-3">
+          <div class="grid grid-cols-3 gap-2">
+            <a
+              *ngFor="let s of socials"
+              mat-stroked-button
+              [href]="s.url"
+              target="_blank"
+              rel="noopener"
+            >
+              <mat-icon>{{ s.icon }}</mat-icon>
+              {{ s.label }}
+            </a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

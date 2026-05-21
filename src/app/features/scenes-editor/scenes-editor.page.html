@@ -1,0 +1,76 @@
+<div class="space-y-6 animate-fade-in">
+  <div class="flex items-start justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
+        Tạo ảnh & video cho từng scene
+      </h1>
+      <p class="text-sm text-slate-500 mt-1">
+        {{ scenes().length }} scene · tỷ lệ
+        <strong>{{ aspectMeta().label }}</strong>
+        · cost dự kiến
+        <strong>~{{ estimatedCost() }}</strong>
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button mat-button (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+        Đổi kịch bản
+      </button>
+      <button
+        mat-stroked-button
+        [disabled]="busyBuildPrompts()"
+        (click)="buildPrompts()"
+        matTooltip="Sinh image_prompt + motion_prompt cho mọi scene"
+      >
+        <mat-icon>auto_fix_high</mat-icon>
+        {{ busyBuildPrompts() ? 'Đang build…' : 'Build prompts' }}
+      </button>
+      <button
+        mat-stroked-button
+        [disabled]="busyAllImages() || !allHavePrompts()"
+        (click)="genAllImages()"
+      >
+        <mat-icon>burst_mode</mat-icon>
+        {{ busyAllImages() ? 'Đang gen ảnh…' : 'Gen all images' }}
+      </button>
+      <button
+        mat-stroked-button
+        [disabled]="busyAllVideos() || !allHaveImages()"
+        (click)="genAllVideos()"
+        matTooltip="Veo3: ~$0.4/giây video. Confirm trước khi bấm!"
+      >
+        <mat-icon>movie</mat-icon>
+        Gen all videos
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="rendering() || !allHaveVideos()"
+        (click)="renderAndGoPublish()"
+      >
+        <ng-container *ngIf="!rendering()">
+          <mat-icon>movie_creation</mat-icon>
+          Render & sang Publish
+        </ng-container>
+        <ng-container *ngIf="rendering()">
+          <mat-progress-spinner
+            mode="indeterminate"
+            diameter="20"
+          ></mat-progress-spinner>
+          <span class="ml-2">Đang render…</span>
+        </ng-container>
+      </button>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <app-scene-card
+      *ngFor="let s of scenes()"
+      [scene]="s"
+      [aspectRatio]="aspectRatio()"
+      (genImage)="genImage($event)"
+      (genVideo)="genVideo($event)"
+    />
+  </div>
+</div>

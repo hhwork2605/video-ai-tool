@@ -1,0 +1,15 @@
+<mat-stepper
+  orientation="horizontal"
+  labelPosition="bottom"
+  [selectedIndex]="currentIndex()"
+  (selectionChange)="onStep($event)"
+  class="bg-transparent"
+>
+  <mat-step
+    *ngFor="let s of steps; let i = index"
+    [label]="labels[s]"
+    [completed]="i < currentIndex()"
+    [editable]="true"
+  >
+  </mat-step>
+</mat-stepper>
