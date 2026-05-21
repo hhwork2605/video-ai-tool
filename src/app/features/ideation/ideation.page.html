@@ -8,118 +8,135 @@
     </p>
   </section>
 
-  <mat-card appearance="outlined" class="max-w-3xl mx-auto">
-    <mat-card-content class="!p-4 sm:!p-6 space-y-5">
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Ý tưởng video của bạn</mat-label>
-        <textarea
-          matInput
-          [(ngModel)]="ideaText"
-          rows="4"
-          placeholder="Ví dụ: Video review 3 quán cà phê yên tĩnh ở quận 1 cho dân làm việc remote."
-          maxlength="500"
-        ></textarea>
-        <mat-hint align="end">{{ ideaText.length }} / 500</mat-hint>
-        <mat-icon matPrefix>lightbulb</mat-icon>
-      </mat-form-field>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <mat-form-field appearance="outline">
-          <mat-label>Đối tượng xem</mat-label>
-          <input
-            matInput
-            [(ngModel)]="audience"
-            placeholder="Gen Z, dân văn phòng, mẹ bỉm sữa…"
-          />
-          <mat-icon matPrefix>group</mat-icon>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Ngôn ngữ</mat-label>
-          <mat-select [(ngModel)]="language">
-            <mat-option value="vi">Tiếng Việt</mat-option>
-            <mat-option value="en">English</mat-option>
-          </mat-select>
-          <mat-icon matPrefix>language</mat-icon>
-        </mat-form-field>
+  <p-card styleClass="max-w-3xl mx-auto !shadow-md">
+    <div class="space-y-6 p-2 sm:p-4">
+      <!-- Idea textarea -->
+      <div>
+        <p-floatlabel variant="on">
+          <textarea
+            pTextarea
+            id="idea"
+            [(ngModel)]="ideaText"
+            rows="4"
+            maxlength="500"
+            class="w-full"
+            autoResize
+          ></textarea>
+          <label for="idea">
+            <i class="pi pi-lightbulb mr-1"></i>
+            Ý tưởng video của bạn
+          </label>
+        </p-floatlabel>
+        <small class="text-slate-400 block text-right mt-1">
+          {{ ideaText.length }} / 500
+        </small>
       </div>
 
+      <!-- Audience + Language -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p-floatlabel variant="on">
+          <input
+            pInputText
+            id="audience"
+            [(ngModel)]="audience"
+            class="w-full"
+            placeholder="Gen Z, dân văn phòng…"
+          />
+          <label for="audience">
+            <i class="pi pi-users mr-1"></i>
+            Đối tượng xem
+          </label>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <p-select
+            inputId="lang"
+            [options]="languageOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="language"
+            styleClass="w-full"
+          />
+          <label for="lang">
+            <i class="pi pi-globe mr-1"></i>
+            Ngôn ngữ
+          </label>
+        </p-floatlabel>
+      </div>
+
+      <!-- Aspect ratio -->
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-2">
           Tỷ lệ video
         </label>
-        <mat-button-toggle-group
-          [value]="aspectRatio()"
-          (change)="aspectRatio.set($event.value)"
-          hideSingleSelectionIndicator
-          class="!w-full !flex"
+        <p-selectButton
+          [options]="aspectOptions"
+          optionLabel="label"
+          optionValue="value"
+          [(ngModel)]="selectedAspect"
+          styleClass="w-full flex"
         >
-          <mat-button-toggle
-            *ngFor="let opt of aspectOptions"
-            [value]="opt.value"
-            class="!flex-1"
-          >
-            <div class="flex flex-col items-center gap-1.5 py-2">
+          <ng-template let-opt #item>
+            <div class="flex flex-col items-center gap-1.5 py-2 px-4">
               <div
                 class="bg-gradient-to-br from-slate-300 to-slate-400 rounded w-8 sm:w-10"
                 [ngClass]="opt.previewClass"
               ></div>
               <span class="text-xs sm:text-sm">{{ opt.label }}</span>
             </div>
-          </mat-button-toggle>
-        </mat-button-toggle-group>
+          </ng-template>
+        </p-selectButton>
       </div>
 
+      <!-- Duration -->
       <div>
         <label
-          class="flex items-center justify-between text-sm font-medium text-slate-700 mb-1"
+          class="flex items-center justify-between text-sm font-medium text-slate-700 mb-2"
         >
           <span>Độ dài mong muốn</span>
-          <span class="text-brand-600 font-semibold">{{ durationSec() }}s</span>
+          <span class="text-primary-600 font-semibold">{{ durationSec() }}s</span>
         </label>
-        <mat-slider min="10" max="120" step="5" discrete showTickMarks class="w-full">
-          <input
-            matSliderThumb
-            [ngModel]="durationSec()"
-            (ngModelChange)="durationSec.set(+$event)"
-          />
-        </mat-slider>
+        <p-slider
+          [(ngModel)]="durationModel"
+          (onChange)="durationSec.set(durationModel)"
+          [min]="10"
+          [max]="120"
+          [step]="5"
+          styleClass="w-full"
+        />
       </div>
 
+      <!-- Candidate count -->
       <div>
         <label
-          class="flex items-center justify-between text-sm font-medium text-slate-700 mb-1"
+          class="flex items-center justify-between text-sm font-medium text-slate-700 mb-2"
         >
           <span>Số kịch bản AI gen</span>
-          <span class="text-brand-600 font-semibold">{{ candidateCount() }}</span>
+          <span class="text-primary-600 font-semibold">
+            {{ candidateCount() }}
+          </span>
         </label>
-        <mat-slider min="1" max="5" step="1" discrete showTickMarks class="w-full">
-          <input
-            matSliderThumb
-            [ngModel]="candidateCount()"
-            (ngModelChange)="candidateCount.set(+$event)"
-          />
-        </mat-slider>
+        <p-slider
+          [(ngModel)]="candidateModel"
+          (onChange)="candidateCount.set(candidateModel)"
+          [min]="1"
+          [max]="5"
+          [step]="1"
+          styleClass="w-full"
+        />
       </div>
 
-      <button
-        mat-flat-button
-        color="primary"
-        class="!w-full !h-12 !text-base"
-        [disabled]="loading() || !ideaText.trim()"
-        (click)="generate()"
-      >
-        <ng-container *ngIf="!loading()">
-          <mat-icon>auto_awesome</mat-icon>
-          Sinh {{ candidateCount() }} kịch bản
-        </ng-container>
-        <ng-container *ngIf="loading()">
-          <mat-progress-spinner
-            mode="indeterminate"
-            diameter="20"
-          ></mat-progress-spinner>
-          <span class="ml-2">Đang gọi AI…</span>
-        </ng-container>
-      </button>
-    </mat-card-content>
-  </mat-card>
+      <!-- CTA -->
+      <p-button
+        label="Sinh {{ candidateCount() }} kịch bản"
+        icon="pi pi-sparkles"
+        [loading]="loading()"
+        loadingIcon="pi pi-spin pi-spinner"
+        [disabled]="!ideaText.trim()"
+        (onClick)="generate()"
+        severity="primary"
+        size="large"
+        styleClass="w-full"
+      />
+    </div>
+  </p-card>
 </div>

@@ -1,49 +1,27 @@
 // ============================================================
-// Global styles — Material 18 M3 + Tailwind v3 coexist.
+// Global styles — PrimeNG Aura theme + Tailwind v3 coexist.
 //
-// Thứ tự load quan trọng:
-//   1. Tailwind base (reset) — chạy trước
-//   2. Material core + theme — override reset ở mọi component mat-*
-//   3. Tailwind components + utilities — vẫn dùng cho layout/spacing
-//   4. Custom layer
+// PrimeNG theme tự inject runtime qua providePrimeNG(). Ở đây chỉ:
+//   1. Khai báo @layer order để Tailwind utility win khi cần
+//   2. Load PrimeIcons CSS
+//   3. Tailwind base + components + utilities
 // ============================================================
 
-@use '@angular/material' as mat;
+@layer tailwind-base, primeng, tailwind-utilities;
 
-@include mat.core();
+@import 'primeicons/primeicons.css';
 
-// M3 custom theme — primary lấy palette violet (~brand purple #6366f1 family).
-$app-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$violet-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  density: (
-    scale: 0,
-  ),
-  typography: (
-    plain-family: ('Inter', 'system-ui', 'Segoe UI', 'sans-serif'),
-    brand-family: ('Inter', 'system-ui', 'Segoe UI', 'sans-serif'),
-  ),
-));
-
-// Tailwind base (reset) — load trước Material.
-@tailwind base;
-
-// Material theme tokens + component styles.
-html {
-  @include mat.all-component-themes($app-theme);
-  color-scheme: light;
+@layer tailwind-base {
+  @tailwind base;
 }
 
-// Tailwind components + utilities — load sau Material để utility win
-// khi cần override layout/spacing trên component Material.
-@tailwind components;
-@tailwind utilities;
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
 
-// Component classes tái dùng (Tailwind-based, không phụ thuộc Material).
-@layer components {
+// Component classes tái dùng (Tailwind-based).
+@layer tailwind-utilities {
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-200 p-4;
   }
@@ -52,11 +30,7 @@ html {
 // Base globals.
 html,
 body {
-  @apply h-full bg-slate-50 text-slate-900 antialiased;
-  font-family: 'Inter', 'Roboto', system-ui, 'Segoe UI', sans-serif;
-}
-
-// Material Icons baseline alignment fix.
-.mat-icon {
-  vertical-align: middle;
+  height: 100%;
+  font-family: 'Inter', 'system-ui', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }

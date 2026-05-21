@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ApiService } from '../../core/api/api.service';
 import { toErrorMessage } from '../../core/helpers';
 import { ScriptCandidate } from '../../core/models';
@@ -20,11 +19,9 @@ import { CandidateCardComponent } from './components/candidate-card.component';
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
+    CardModule,
+    ButtonModule,
+    ProgressSpinnerModule,
     CandidateCardComponent,
   ],
   templateUrl: './script-picker.page.html',
@@ -34,7 +31,7 @@ export class ScriptPickerPage implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private state = inject(ProjectStateService);
-  private snack = inject(MatSnackBar);
+  private msg = inject(MessageService);
 
   readonly loading = signal<boolean>(true);
   readonly confirming = signal<boolean>(false);
@@ -65,8 +62,11 @@ export class ScriptPickerPage implements OnInit {
         },
         error: (e) => {
           this.loading.set(false);
-          this.snack.open(toErrorMessage(e, 'Không tải được project.'), 'Đóng', {
-            duration: 4000,
+          this.msg.add({
+            severity: 'error',
+            summary: 'Không tải được project',
+            detail: toErrorMessage(e, ''),
+            life: 4000,
           });
         },
       });
@@ -85,8 +85,11 @@ export class ScriptPickerPage implements OnInit {
       },
       error: (e) => {
         this.confirming.set(false);
-        this.snack.open(toErrorMessage(e, 'Lỗi khi chọn kịch bản.'), 'Đóng', {
-          duration: 4000,
+        this.msg.add({
+          severity: 'error',
+          summary: 'Lỗi chọn kịch bản',
+          detail: toErrorMessage(e, ''),
+          life: 4000,
         });
       },
     });

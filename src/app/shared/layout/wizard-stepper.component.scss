@@ -2,17 +2,19 @@
   display: block;
 }
 
-::ng-deep .mat-stepper-horizontal {
+// p-steps Aura mặc định có border-bottom — bỏ để mượt khi đặt trong header.
+::ng-deep .p-steps {
   background: transparent;
+  padding: 0.5rem 0;
+
+  .p-steps-item .p-menuitem-link {
+    background: transparent;
+  }
 }
 
-::ng-deep .mat-horizontal-content-container {
-  padding: 0 !important;
-  display: none; /* chỉ dùng stepper làm header, content nằm trong router-outlet */
-}
-
+// Ẩn label trên mobile, chỉ giữ chấm số.
 @media (max-width: 480px) {
-  ::ng-deep .mat-step-label {
+  ::ng-deep .p-steps-item .p-menuitem-link .p-steps-title {
     display: none !important;
   }
 }

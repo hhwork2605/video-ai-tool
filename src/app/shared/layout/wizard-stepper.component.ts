@@ -1,23 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
+import { MenuItem } from 'primeng/api';
+import { StepsModule } from 'primeng/steps';
 import { ProjectStage, STAGE_LABEL, STAGE_ORDER } from '../../core/models';
 
 /**
- * Material stepper làm visual progress indicator + navigation.
- * Mỗi step gắn 1 route. Click step header → router navigate (chỉ cho phép
- * lùi về stage đã hoàn thành; bước tương lai vẫn cho click nếu user muốn skip
- * — backend sẽ reject nếu state chưa đủ).
+ * PrimeNG p-steps làm visual progress indicator + navigation.
+ * Click step header → router navigate. Pattern tương tự mat-stepper cũ.
  *
- * Responsive: labelPosition="bottom" để mobile co giãn được. Khi viewport < 480px,
- * mat-stepper tự ẩn label, chỉ giữ chấm số.
+ * Responsive: <480px tự ẩn label qua SCSS, giữ chấm số.
  */
 @Component({
   selector: 'app-wizard-stepper',
   standalone: true,
-  imports: [CommonModule, MatStepperModule],
+  imports: [CommonModule, StepsModule],
   templateUrl: './wizard-stepper.component.html',
   styleUrl: './wizard-stepper.component.scss',
 })
@@ -28,25 +25,30 @@ export class WizardStepperComponent {
   readonly projectId = input.required<string>();
 
   readonly steps = STAGE_ORDER;
-  readonly labels = STAGE_LABEL;
   readonly currentIndex = computed(() => this.steps.indexOf(this.current()));
 
-  private routeFor(stage: ProjectStage): string[] {
+  readonly items = computed<MenuItem[]>(() =>
+    this.steps.map((stage) => ({
+      label: STAGE_LABEL[stage],
+    }))
+  );
+
+  onStepClick(index: number): void {
+    const stage = this.steps[index];
+    if (!stage) return;
     switch (stage) {
       case 'Ideation':
-        return ['/idea'];
+        this.router.navigate(['/idea']);
+        break;
       case 'ScriptSelection':
-        return ['/scripts', this.projectId()];
+        this.router.navigate(['/scripts', this.projectId()]);
+        break;
       case 'SceneGeneration':
-        return ['/scenes', this.projectId()];
+        this.router.navigate(['/scenes', this.projectId()]);
+        break;
       case 'Publish':
-        return ['/publish', this.projectId()];
+        this.router.navigate(['/publish', this.projectId()]);
+        break;
     }
-  }
-
-  onStep(e: StepperSelectionEvent): void {
-    const stage = this.steps[e.selectedIndex];
-    if (!stage) return;
-    this.router.navigate(this.routeFor(stage));
   }
 }

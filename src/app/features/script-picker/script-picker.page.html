@@ -9,14 +9,16 @@
         bấm "Dùng kịch bản này".
       </p>
     </div>
-    <button mat-button (click)="goBack()">
-      <mat-icon>edit</mat-icon>
-      Sửa ý tưởng
-    </button>
+    <p-button
+      label="Sửa ý tưởng"
+      icon="pi pi-pencil"
+      [text]="true"
+      (onClick)="goBack()"
+    />
   </div>
 
   <div *ngIf="loading()" class="flex justify-center py-12">
-    <mat-progress-spinner mode="indeterminate" diameter="48" />
+    <p-progressSpinner styleClass="!w-12 !h-12" strokeWidth="3" />
   </div>
 
   <div
@@ -31,39 +33,28 @@
     </div>
   </div>
 
+  <!-- Sticky action bar -->
   <div
     *ngIf="!loading() && selectedId()"
     class="sticky bottom-4 z-20 mx-auto max-w-2xl animate-slide-up"
   >
-    <mat-card appearance="raised" class="!shadow-xl">
-      <mat-card-content
-        class="!p-3 sm:!p-4 flex items-center justify-between gap-3"
-      >
+    <p-card styleClass="!shadow-xl !border-2 !border-primary-300">
+      <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-2 min-w-0">
-          <mat-icon class="text-primary">check_circle</mat-icon>
+          <i class="pi pi-check-circle text-primary-600 text-xl"></i>
           <span class="text-sm truncate">
             Đã chọn: <strong>{{ selectedCandidate()?.title }}</strong>
           </span>
         </div>
-        <button
-          mat-flat-button
-          color="primary"
-          [disabled]="confirming()"
-          (click)="confirm()"
-        >
-          <ng-container *ngIf="!confirming()">
-            Dùng kịch bản này
-            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-          </ng-container>
-          <ng-container *ngIf="confirming()">
-            <mat-progress-spinner
-              mode="indeterminate"
-              diameter="20"
-            ></mat-progress-spinner>
-            <span class="ml-2">Đang tải…</span>
-          </ng-container>
-        </button>
-      </mat-card-content>
-    </mat-card>
+        <p-button
+          label="Dùng kịch bản này"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          [loading]="confirming()"
+          loadingIcon="pi pi-spin pi-spinner"
+          (onClick)="confirm()"
+        />
+      </div>
+    </p-card>
   </div>
 </div>

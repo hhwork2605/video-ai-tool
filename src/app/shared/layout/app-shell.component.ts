@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 import { ProjectStateService } from '../../core/state/project-state.service';
 import { WizardStepperComponent } from './wizard-stepper.component';
 
 /**
- * Layout: mat-toolbar sticky + WizardStepper + router-outlet + footer.
+ * Layout: p-toolbar sticky + WizardStepper + router-outlet + global p-toast + footer.
  */
 @Component({
   selector: 'app-shell',
@@ -16,8 +16,8 @@ import { WizardStepperComponent } from './wizard-stepper.component';
     CommonModule,
     RouterOutlet,
     RouterLink,
-    MatToolbarModule,
-    MatIconModule,
+    ToolbarModule,
+    ToastModule,
     WizardStepperComponent,
   ],
   templateUrl: './app-shell.component.html',

@@ -1,23 +1,44 @@
 import { SceneStatus } from '../models';
 
 /**
- * Map SceneStatus → Tailwind class cho mat-chip (kèm `!` prefix override Material).
- * Dùng chung cho mọi nơi hiển thị status badge.
+ * Map SceneStatus → severity của PrimeNG p-tag.
+ * Severity values: 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast'.
  */
-export function statusChipClass(status: SceneStatus): string {
+export function sceneStatusSeverity(
+  status: SceneStatus
+): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
   switch (status) {
     case 'ImageGenerating':
     case 'VideoGenerating':
-      return '!bg-amber-100 !text-amber-800 animate-pulse';
+      return 'warn';
     case 'ImageDone':
     case 'VideoDone':
-      return '!bg-emerald-100 !text-emerald-800';
+      return 'success';
     case 'PromptReady':
-      return '!bg-blue-100 !text-blue-700';
+      return 'info';
     case 'Failed':
-      return '!bg-red-100 !text-red-700';
+      return 'danger';
     default:
-      return '!bg-slate-200 !text-slate-700';
+      return 'secondary';
+  }
+}
+
+/** Icon PrimeIcons phù hợp với status (hiển thị bên trong p-tag). */
+export function sceneStatusIcon(status: SceneStatus): string {
+  switch (status) {
+    case 'ImageGenerating':
+    case 'VideoGenerating':
+      return 'pi pi-spin pi-spinner';
+    case 'ImageDone':
+      return 'pi pi-image';
+    case 'VideoDone':
+      return 'pi pi-check-circle';
+    case 'PromptReady':
+      return 'pi pi-pen-to-square';
+    case 'Failed':
+      return 'pi pi-times-circle';
+    default:
+      return 'pi pi-clock';
   }
 }
 

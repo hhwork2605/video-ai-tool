@@ -1,44 +1,45 @@
-<mat-card appearance="outlined">
-  <!-- Preview -->
-  <div
-    class="relative rounded-t-lg overflow-hidden bg-slate-100"
-    [ngClass]="aspectMeta().previewClass"
-  >
-    <img
-      *ngIf="scene().imageUrl && !scene().videoUrl"
-      [src]="scene().imageUrl!"
-      [alt]="'Scene ' + (scene().index + 1)"
-      class="absolute inset-0 h-full w-full object-cover"
-    />
-    <video
-      *ngIf="scene().videoUrl"
-      [src]="scene().videoUrl!"
-      controls
-      class="absolute inset-0 h-full w-full object-cover bg-black"
-    ></video>
+<p-card styleClass="!shadow-sm hover:!shadow-md transition-shadow">
+  <ng-template pTemplate="header">
     <div
-      *ngIf="!scene().imageUrl && !scene().videoUrl"
-      class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 gap-1"
+      class="relative overflow-hidden bg-slate-100"
+      [ngClass]="aspectMeta().previewClass"
     >
-      <mat-icon class="!text-4xl !w-10 !h-10">image</mat-icon>
-      <span class="text-xs">Chưa có ảnh</span>
+      <img
+        *ngIf="scene().imageUrl && !scene().videoUrl"
+        [src]="scene().imageUrl!"
+        [alt]="'Scene ' + (scene().index + 1)"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <video
+        *ngIf="scene().videoUrl"
+        [src]="scene().videoUrl!"
+        controls
+        class="absolute inset-0 h-full w-full object-cover bg-black"
+      ></video>
+      <div
+        *ngIf="!scene().imageUrl && !scene().videoUrl"
+        class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 gap-1"
+      >
+        <i class="pi pi-image text-3xl"></i>
+        <span class="text-xs">Chưa có ảnh</span>
+      </div>
+
+      <p-tag
+        [value]="scene().status"
+        [severity]="statusSeverity()"
+        [icon]="statusIcon()"
+        rounded
+        styleClass="!absolute !top-2 !left-2 !text-[10px]"
+      />
+      <span
+        class="absolute top-2 right-2 text-[10px] font-mono text-white bg-black/40 px-1.5 py-0.5 rounded"
+      >
+        #{{ scene().index + 1 }}
+      </span>
     </div>
+  </ng-template>
 
-    <mat-chip
-      class="!absolute !top-2 !left-2 !text-[10px]"
-      [ngClass]="chipClass()"
-      disableRipple
-    >
-      {{ scene().status }}
-    </mat-chip>
-    <span
-      class="absolute top-2 right-2 text-[10px] font-mono text-white bg-black/40 px-1.5 py-0.5 rounded"
-    >
-      #{{ scene().index + 1 }}
-    </span>
-  </div>
-
-  <mat-card-content class="!pt-3 space-y-3">
+  <div class="space-y-3">
     <div>
       <label
         class="text-[11px] uppercase tracking-wide text-slate-400 font-medium"
@@ -57,32 +58,37 @@
     </div>
     <div
       *ngIf="scene().errorMessage"
-      class="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1"
+      class="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1"
     >
+      <i class="pi pi-exclamation-triangle mr-1"></i>
       {{ scene().errorMessage }}
     </div>
-  </mat-card-content>
+  </div>
 
-  <mat-card-actions class="!px-4 !pb-3 !flex !gap-2">
-    <button
-      mat-stroked-button
-      class="!flex-1"
-      [disabled]="!scene().imagePromptEn || busy()"
-      (click)="genImage.emit(scene())"
-      matTooltip="Cần có prompt — bấm 'Build prompts' nếu chưa có"
-    >
-      <mat-icon>image</mat-icon>
-      {{ scene().status === 'ImageGenerating' ? '…' : 'Gen ảnh' }}
-    </button>
-    <button
-      mat-stroked-button
-      class="!flex-1"
-      [disabled]="!scene().imageUrl || busy()"
-      (click)="genVideo.emit(scene())"
-      matTooltip="Cần ảnh trước. Veo3 mất 30s–2 phút/clip"
-    >
-      <mat-icon>videocam</mat-icon>
-      {{ scene().status === 'VideoGenerating' ? '…' : 'Gen video' }}
-    </button>
-  </mat-card-actions>
-</mat-card>
+  <ng-template pTemplate="footer">
+    <div class="flex gap-2">
+      <p-button
+        label="Gen ảnh"
+        icon="pi pi-image"
+        [outlined]="true"
+        size="small"
+        [disabled]="!scene().imagePromptEn || busy()"
+        (onClick)="genImage.emit(scene())"
+        pTooltip="Cần có prompt — bấm 'Build prompts' nếu chưa có"
+        tooltipPosition="top"
+        styleClass="flex-1"
+      />
+      <p-button
+        label="Gen video"
+        icon="pi pi-video"
+        [outlined]="true"
+        size="small"
+        [disabled]="!scene().imageUrl || busy()"
+        (onClick)="genVideo.emit(scene())"
+        pTooltip="Cần ảnh trước. Veo3 mất 30s–2 phút/clip"
+        tooltipPosition="top"
+        styleClass="flex-1"
+      />
+    </div>
+  </ng-template>
+</p-card>

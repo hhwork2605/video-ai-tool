@@ -8,58 +8,52 @@
         {{ scenes().length }} scene · tỷ lệ
         <strong>{{ aspectMeta().label }}</strong>
         · cost dự kiến
-        <strong>~{{ estimatedCost() }}</strong>
+        <strong class="text-primary-700">~{{ estimatedCost() }}</strong>
       </p>
     </div>
     <div class="flex flex-wrap gap-2">
-      <button mat-button (click)="back()">
-        <mat-icon>arrow_back</mat-icon>
-        Đổi kịch bản
-      </button>
-      <button
-        mat-stroked-button
-        [disabled]="busyBuildPrompts()"
-        (click)="buildPrompts()"
-        matTooltip="Sinh image_prompt + motion_prompt cho mọi scene"
-      >
-        <mat-icon>auto_fix_high</mat-icon>
-        {{ busyBuildPrompts() ? 'Đang build…' : 'Build prompts' }}
-      </button>
-      <button
-        mat-stroked-button
-        [disabled]="busyAllImages() || !allHavePrompts()"
-        (click)="genAllImages()"
-      >
-        <mat-icon>burst_mode</mat-icon>
-        {{ busyAllImages() ? 'Đang gen ảnh…' : 'Gen all images' }}
-      </button>
-      <button
-        mat-stroked-button
+      <p-button
+        label="Đổi kịch bản"
+        icon="pi pi-arrow-left"
+        [text]="true"
+        (onClick)="back()"
+      />
+      <p-button
+        [label]="busyBuildPrompts() ? 'Đang build…' : 'Build prompts'"
+        icon="pi pi-sparkles"
+        [outlined]="true"
+        [loading]="busyBuildPrompts()"
+        loadingIcon="pi pi-spin pi-spinner"
+        (onClick)="buildPrompts()"
+        pTooltip="Sinh image_prompt + motion_prompt cho mọi scene"
+      />
+      <p-button
+        [label]="busyAllImages() ? 'Đang gen ảnh…' : 'Gen all images'"
+        icon="pi pi-images"
+        [outlined]="true"
+        [loading]="busyAllImages()"
+        loadingIcon="pi pi-spin pi-spinner"
+        [disabled]="!allHavePrompts()"
+        (onClick)="genAllImages()"
+      />
+      <p-button
+        label="Gen all videos"
+        icon="pi pi-video"
+        [outlined]="true"
         [disabled]="busyAllVideos() || !allHaveImages()"
-        (click)="genAllVideos()"
-        matTooltip="Veo3: ~$0.4/giây video. Confirm trước khi bấm!"
-      >
-        <mat-icon>movie</mat-icon>
-        Gen all videos
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        [disabled]="rendering() || !allHaveVideos()"
-        (click)="renderAndGoPublish()"
-      >
-        <ng-container *ngIf="!rendering()">
-          <mat-icon>movie_creation</mat-icon>
-          Render & sang Publish
-        </ng-container>
-        <ng-container *ngIf="rendering()">
-          <mat-progress-spinner
-            mode="indeterminate"
-            diameter="20"
-          ></mat-progress-spinner>
-          <span class="ml-2">Đang render…</span>
-        </ng-container>
-      </button>
+        (onClick)="genAllVideos()"
+        pTooltip="Veo3: ~$0.4/giây video"
+      />
+      <p-button
+        [label]="rendering() ? 'Đang render…' : 'Render & sang Publish'"
+        icon="pi pi-arrow-right"
+        iconPos="right"
+        [loading]="rendering()"
+        loadingIcon="pi pi-spin pi-spinner"
+        [disabled]="!allHaveVideos()"
+        severity="primary"
+        (onClick)="renderAndGoPublish()"
+      />
     </div>
   </div>
 

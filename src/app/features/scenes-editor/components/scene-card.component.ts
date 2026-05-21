@@ -1,28 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { isSceneBusy, statusChipClass } from '../../../core/helpers';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import {
+  isSceneBusy,
+  sceneStatusIcon,
+  sceneStatusSeverity,
+} from '../../../core/helpers';
 import { ASPECT_RATIO_META, AspectRatio, Scene } from '../../../core/models';
 
 /**
- * Card hiển thị + thao tác 1 scene. Pure presentation — emit event ra parent
- * khi user bấm gen image/video. Status chip class lấy từ helper chung.
+ * Card hiển thị + thao tác 1 scene. PrimeNG p-card + p-tag + pTooltip.
+ * Pure presentation — emit gen image/video ra parent.
  */
 @Component({
   selector: 'app-scene-card',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatChipsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-  ],
+  imports: [CommonModule, CardModule, TagModule, ButtonModule, TooltipModule],
   templateUrl: './scene-card.component.html',
 })
 export class SceneCardComponent {
@@ -34,5 +30,6 @@ export class SceneCardComponent {
 
   readonly aspectMeta = computed(() => ASPECT_RATIO_META[this.aspectRatio()]);
   readonly busy = computed(() => isSceneBusy(this.scene().status));
-  readonly chipClass = computed(() => statusChipClass(this.scene().status));
+  readonly statusSeverity = computed(() => sceneStatusSeverity(this.scene().status));
+  readonly statusIcon = computed(() => sceneStatusIcon(this.scene().status));
 }

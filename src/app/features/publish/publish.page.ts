@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { ChipModule } from 'primeng/chip';
+import { DividerModule } from 'primeng/divider';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TextareaModule } from 'primeng/textarea';
+import { TooltipModule } from 'primeng/tooltip';
 import { ApiService } from '../../core/api/api.service';
 import { toErrorMessage } from '../../core/helpers';
 import {
@@ -31,16 +31,15 @@ import { ProjectStateService } from '../../core/state/project-state.service';
   imports: [
     CommonModule,
     FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDividerModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatTooltipModule,
+    CardModule,
+    ButtonModule,
+    ChipModule,
+    DividerModule,
+    FloatLabelModule,
+    InputTextModule,
+    TextareaModule,
+    ProgressSpinnerModule,
+    TooltipModule,
   ],
   templateUrl: './publish.page.html',
 })
@@ -49,7 +48,7 @@ export class PublishPage implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private state = inject(ProjectStateService);
-  private snack = inject(MatSnackBar);
+  private msg = inject(MessageService);
 
   readonly project = signal<Project | null>(null);
   readonly meta = computed<PublishMetadata | null>(
@@ -59,9 +58,9 @@ export class PublishPage implements OnInit {
   private projectId = '';
 
   readonly socials = [
-    { label: 'TikTok', icon: 'music_note', url: 'https://www.tiktok.com/upload' },
-    { label: 'Reels', icon: 'photo_camera', url: 'https://www.instagram.com/' },
-    { label: 'Shorts', icon: 'play_circle', url: 'https://studio.youtube.com/' },
+    { label: 'TikTok', icon: 'pi pi-tiktok', url: 'https://www.tiktok.com/upload' },
+    { label: 'Reels', icon: 'pi pi-instagram', url: 'https://www.instagram.com/' },
+    { label: 'Shorts', icon: 'pi pi-youtube', url: 'https://studio.youtube.com/' },
   ];
 
   ngOnInit(): void {
@@ -80,7 +79,12 @@ export class PublishPage implements OnInit {
           this.project.set(p);
         },
         error: (e) =>
-          this.snack.open(toErrorMessage(e, 'Không tải được project.'), 'Đóng', { duration: 4000 }),
+          this.msg.add({
+            severity: 'error',
+            summary: 'Không tải được project',
+            detail: toErrorMessage(e, ''),
+            life: 4000,
+          }),
       });
     }
   }
@@ -104,29 +108,46 @@ export class PublishPage implements OnInit {
         this.state.set(p);
         this.project.set(p);
         this.loading.set(false);
-        this.snack.open('Đã gen metadata mới', 'OK', { duration: 2000 });
+        this.msg.add({
+          severity: 'success',
+          summary: 'Đã gen metadata',
+          life: 2000,
+        });
       },
       error: (e) => {
         this.loading.set(false);
-        this.snack.open(toErrorMessage(e, 'Lỗi khi gen metadata.'), 'Đóng', { duration: 4000 });
+        this.msg.add({
+          severity: 'error',
+          summary: 'Lỗi gen metadata',
+          detail: toErrorMessage(e, ''),
+          life: 4000,
+        });
       },
     });
   }
 
   copy(text: string, label: string): void {
     navigator.clipboard.writeText(text);
-    this.snack.open(`Đã copy ${label}`, undefined, { duration: 1500 });
+    this.msg.add({
+      severity: 'success',
+      summary: `Đã copy ${label}`,
+      life: 1500,
+    });
   }
 
   copyHashtags(tags: string[]): void {
     navigator.clipboard.writeText(tags.map((h) => '#' + h).join(' '));
-    this.snack.open('Đã copy hashtags', undefined, { duration: 1500 });
+    this.msg.add({ severity: 'success', summary: 'Đã copy hashtags', life: 1500 });
   }
 
   copyAll(m: PublishMetadata): void {
     const text = `${m.caption}\n\n${m.hashtags.map((h) => '#' + h).join(' ')}`;
     navigator.clipboard.writeText(text);
-    this.snack.open('Đã copy caption + hashtag', undefined, { duration: 1500 });
+    this.msg.add({
+      severity: 'success',
+      summary: 'Đã copy caption + hashtag',
+      life: 1500,
+    });
   }
 
   download(): void {
