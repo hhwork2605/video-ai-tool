@@ -3,13 +3,14 @@
 //
 // PrimeNG theme tự inject runtime qua providePrimeNG(). Ở đây chỉ:
 //   1. Khai báo @layer order để Tailwind utility win khi cần
-//   2. Load PrimeIcons CSS
-//   3. Tailwind base + components + utilities
+//   2. Tailwind base + components + utilities
+//
+// PrimeIcons CSS được nạp qua angular.json `styles` array
+// (KHÔNG @import ở đây — font url tương đối sẽ không resolve được
+//  khi Angular CLI bundle SCSS, dẫn tới icon hiển thị thành ô vuông).
 // ============================================================
 
 @layer tailwind-base, primeng, tailwind-utilities;
-
-@import 'primeicons/primeicons.css';
 
 @layer tailwind-base {
   @tailwind base;

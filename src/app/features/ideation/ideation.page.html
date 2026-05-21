@@ -17,6 +17,7 @@
             pTextarea
             id="idea"
             [(ngModel)]="ideaText"
+            (ngModelChange)="saveDraft()"
             rows="4"
             maxlength="500"
             class="w-full"
@@ -34,19 +35,24 @@
 
       <!-- Audience + Language -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <p-floatlabel variant="on">
-          <input
-            pInputText
-            id="audience"
-            [(ngModel)]="audience"
-            class="w-full"
-            placeholder="Gen Z, dân văn phòng…"
-          />
-          <label for="audience">
-            <i class="pi pi-users mr-1"></i>
-            Đối tượng xem
-          </label>
-        </p-floatlabel>
+        <div>
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="audience"
+              [(ngModel)]="audience"
+              (ngModelChange)="saveDraft()"
+              class="w-full"
+            />
+            <label for="audience">
+              <i class="pi pi-users mr-1"></i>
+              Đối tượng xem
+            </label>
+          </p-floatlabel>
+          <small class="text-slate-400 block mt-1 ml-1">
+            VD: Gen Z, dân văn phòng…
+          </small>
+        </div>
         <p-floatlabel variant="on">
           <p-select
             inputId="lang"
@@ -54,6 +60,7 @@
             optionLabel="label"
             optionValue="value"
             [(ngModel)]="language"
+            (ngModelChange)="saveDraft()"
             styleClass="w-full"
           />
           <label for="lang">
@@ -73,6 +80,7 @@
           optionLabel="label"
           optionValue="value"
           [(ngModel)]="selectedAspect"
+          (ngModelChange)="saveDraft()"
           styleClass="w-full flex"
         >
           <ng-template let-opt #item>
@@ -87,56 +95,56 @@
         </p-selectButton>
       </div>
 
-      <!-- Duration -->
-      <div>
-        <label
-          class="flex items-center justify-between text-sm font-medium text-slate-700 mb-2"
-        >
-          <span>Độ dài mong muốn</span>
-          <span class="text-primary-600 font-semibold">{{ durationSec() }}s</span>
-        </label>
-        <p-slider
-          [(ngModel)]="durationModel"
-          (onChange)="durationSec.set(durationModel)"
-          [min]="10"
-          [max]="120"
-          [step]="5"
+      <!-- Duration + Candidate count -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p-floatlabel variant="on">
+          <p-select
+            inputId="duration"
+            [options]="durationOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="durationModel"
+            (ngModelChange)="saveDraft()"
+            styleClass="w-full"
+          />
+          <label for="duration">
+            <i class="pi pi-clock mr-1"></i>
+            Độ dài mong muốn
+          </label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on">
+          <p-select
+            inputId="count"
+            [options]="candidateOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="candidateModel"
+            (ngModelChange)="saveDraft()"
+            styleClass="w-full"
+          />
+          <label for="count">
+            <i class="pi pi-list mr-1"></i>
+            Số kịch bản AI gen
+          </label>
+        </p-floatlabel>
+      </div>
+
+      <!-- CTA — bọc div để space-y-6 ở parent apply margin-top (p-button host
+           không tạo box layout chuẩn nên Tailwind sibling selector miss). -->
+      <div class="pt-2">
+        <p-button
+          label="Sinh {{ candidateModel }} kịch bản"
+          icon="pi pi-sparkles"
+          [loading]="loading()"
+          loadingIcon="pi pi-spin pi-spinner"
+          [disabled]="!ideaText.trim()"
+          (onClick)="generate()"
+          severity="primary"
+          size="large"
           styleClass="w-full"
         />
       </div>
-
-      <!-- Candidate count -->
-      <div>
-        <label
-          class="flex items-center justify-between text-sm font-medium text-slate-700 mb-2"
-        >
-          <span>Số kịch bản AI gen</span>
-          <span class="text-primary-600 font-semibold">
-            {{ candidateCount() }}
-          </span>
-        </label>
-        <p-slider
-          [(ngModel)]="candidateModel"
-          (onChange)="candidateCount.set(candidateModel)"
-          [min]="1"
-          [max]="5"
-          [step]="1"
-          styleClass="w-full"
-        />
-      </div>
-
-      <!-- CTA -->
-      <p-button
-        label="Sinh {{ candidateCount() }} kịch bản"
-        icon="pi pi-sparkles"
-        [loading]="loading()"
-        loadingIcon="pi pi-spin pi-spinner"
-        [disabled]="!ideaText.trim()"
-        (onClick)="generate()"
-        severity="primary"
-        size="large"
-        styleClass="w-full"
-      />
     </div>
   </p-card>
 </div>
